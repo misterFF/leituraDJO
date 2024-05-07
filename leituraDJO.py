@@ -1,21 +1,12 @@
 import re
 import logging
-#import processos
-from processos import *
-from banco import *
 import sqlite3
-import sqlalchemy
 
 def leitura_arquivo(arquivo_leitura):
     import pandas as pd
-    import numpy as np
-    logging.basicConfig(level=logging.INFO, filename="programa.log", format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(level=logging.INFO, filename="programa_2.log", format="%(asctime)s - %(levelname)s - %(message)s")
     largurasColunasTipoA = [1, 25, 25, 25, 25, 4, 30, 14, 30, 14, 257]
-
-
     caminhoTotal = arquivo_leitura
-
-
 
     baseLidaA = pd.read_fwf(caminhoTotal, header=None, widths=largurasColunasTipoA, encoding='unicode_escape')
 
@@ -146,6 +137,7 @@ def leitura_arquivo(arquivo_leitura):
 
         basesjuntas["DATA_MOVIMENTO"] = pd.to_datetime(dataArquivo, format='%d_%m_%Y')
         basesjuntas["ARQUIVO"] = caminhoTotal.split("\\")[len(caminhoTotal.split("\\"))-1]
+        basesjuntas["TIPO_ARQUIVO"] = tipoArquivo
 
         try:
             basesjuntas.to_excel(f"~\\Documents\\{nomeArquivo}", index=False, sheet_name=tipoArquivo)
@@ -174,8 +166,8 @@ if __name__ == '__main__':
 
         try:
             base = leitura_arquivo(caminhoTotal)
-            if base.iloc[0]["ARQUIVO"].count("DEPOSITOS"):
-                banco = sqlite3.connect('djo.db')
+            if base.iloc[0]["TIPO_ARQUIVO"].count("DEPOSITOS"):
+                banco = sqlite3.connect('C:\\Users\\Flavio Silva\\Documents\\GitHub\\leituraDJOdjo.sqlite3')
                 cursor = banco.cursor()
                 cursor.execute("""create table if not exists depositosacolhidos (
                                NUMERO_DO_PROCESSO text,
@@ -207,8 +199,8 @@ if __name__ == '__main__':
                 banco.commit()
                 cursor.close()
 
-            elif base.iloc[0]["ARQUIVO"].count("FAVOR"):
-                banco = sqlite3.connect('djo.db')
+            elif base.iloc[0]["TIPO_ARQUIVO"].count("FAVOR"):
+                banco = sqlite3.connect('djo.sqlite3')
                 cursor = banco.cursor()
                 cursor.execute("""create table if not exists regatesafavordogoverno (
                                      NUMERO_DO_PROCESSO text,
@@ -240,8 +232,8 @@ if __name__ == '__main__':
                 banco.commit()
                 cursor.close()
 
-            elif base.iloc[0]["ARQUIVO"].count("CONTRA"):
-                banco = sqlite3.connect('djo.db')
+            elif base.iloc[0]["TIPO_ARQUIVO"].count("CONTRA"):
+                banco = sqlite3.connect('djo.sqlite3')
                 cursor = banco.cursor()
                 cursor.execute("""create table if not exists regatescontraogoverno (
                                   NUMERO_DO_PROCESSO text,
@@ -273,8 +265,8 @@ if __name__ == '__main__':
                 banco.commit()
                 cursor.close()
 
-            elif base.iloc[0]["ARQUIVO"].count("CONVENIO"):
-                banco = sqlite3.connect('djo.db')
+            elif base.iloc[0]["TIPO_ARQUIVO"].count("CONVENIO"):
+                banco = sqlite3.connect('djo.sqlite3')
                 cursor = banco.cursor()
                 cursor.execute("""create table if not exists convenioderepasses (
                                 NUMERO_DO_PROCESSO text,
