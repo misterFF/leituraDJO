@@ -193,7 +193,8 @@ if __name__ == '__main__':
                                NR_SEQUENCIAL_LEGISLACAO_TRIBUTARIA text,
                                NUMERO_LEI_TRIBUTARIA text,
                                DATA_MOVIMENTO date,
-                               ARQUIVO text)""")
+                               ARQUIVO text,
+                               TIPO_ARQUIVO)""")
 
                 base.to_sql('depositosacolhidos', banco, if_exists='append', index=False)
                 banco.commit()
@@ -226,7 +227,8 @@ if __name__ == '__main__':
                                      NR_SEQUENCIAL_LEGISLACAO_TRIBUTARIA text,
                                      NUMERO_LEI_TRIBUTARIA text,
                                      DATA_MOVIMENTO date,
-                                     ARQUIVO text)""")
+                                     ARQUIVO text,
+                                     TIPO_ARQUIVO)""")
 
                 base.to_sql('regatesafavordogoverno', banco, if_exists='append', index=False)
                 banco.commit()
@@ -259,7 +261,8 @@ if __name__ == '__main__':
                                   NR_SEQUENCIAL_LEGISLACAO_TRIBUTARIA text,
                                   NUMERO_LEI_TRIBUTARIA text,
                                   DATA_MOVIMENTO date,
-                                  ARQUIVO text)""")
+                                  ARQUIVO text,
+                                  TIPO_ARQUIVO)""")
 
                 base.to_sql('regatescontraogoverno', banco, if_exists='append', index=False)
                 banco.commit()
@@ -292,7 +295,8 @@ if __name__ == '__main__':
                                 NR_SEQUENCIAL_LEGISLACAO_TRIBUTARIA text,
                                 NUMERO_LEI_TRIBUTARIA text,
                                 DATA_MOVIMENTO date,
-                                ARQUIVO text)""")
+                                ARQUIVO text,
+                               TIPO_ARQUIVO)""")
 
                 base.to_sql('convenioderepasses', banco, if_exists='append', index=False)
                 banco.commit()

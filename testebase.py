@@ -15,3 +15,4 @@ cursor.execute('SELEC COUNT(*) FROM convenioderepasse WHERE'
  'DATA_MOVIMENTO==(%s)',dataTeste)
 
 print(cursor.fetchall())
+cursor.close()
