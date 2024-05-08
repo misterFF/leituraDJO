@@ -225,60 +225,28 @@ if __name__ == '__main__':
         caminhoTotal = caminho + arq
         base = leitura_arquivo(caminhoTotal)
         data = str(base.loc[1, 'DATA_MOVIMENTO'])
-        #print(data)
-        #base = leitura_arquivo(caminhoTotal)
         if base.iloc[0]["TIPO_ARQUIVO"].count("DEPOSITOS"):
             tbl = 'depositosacolhidos'
-            #data = str(base.at[0, 'DATA_MOVIMENTO'])
-            #print(data)
             adicionarPlanilhaData(banco, tbl, base)
-            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
 
-
         elif base.iloc[0]["TIPO_ARQUIVO"].count("FAVOR"):
             tbl = 'regatesafavordogoverno'
-            #data = str(base.at[0, 'DATA_MOVIMENTO'])
-            #print(data)
             adicionarPlanilhaData(banco, tbl, base)
-            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("CONTRA"):
             tbl = 'regatescontraogoverno'
-            #data = str(base.at[0, 'DATA_MOVIMENTO'])
-            #print(data)
             adicionarPlanilhaData(banco, tbl, base)
-            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
-
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("CONVENIO"):
             tbl = 'convenioderepasses'
-            #data = str(base.at[0, 'DATA_MOVIMENTO'])
-            #print(data)
             adicionarPlanilhaData(banco, tbl, base)
-            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
         else:
-            print("Arquivo de resumo de movimentação")
-
-
-    #caminhoTotal = caminho + arquivo
-
-    #base = leitura_arquivo(caminhoTotal)
-
-
-    #imp = cursor.execute("SELECT * FROMconvenioderepasses")
-    #i = 1
-    #for rows in imp:
-    #    print(rows)
-    #    print(i)
-    #    i += 1
-
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+            print("Arquivo de resumo de movimentação")  
