@@ -215,38 +215,64 @@ if __name__ == '__main__':
 
     import os
     #caminho = "\\\\cifs-zone3\\transfarq\\SATE\\djo\\2024\\02 - Fevereiro\\Arquivos DJO\\"
-    #caminho = "C:\\Users\\fsilva3\\Documents\\Arquivoslidos\\"
-    caminho = "C:\\Users\\Flavio Silva\\Documents\\ArquivosConvenio\\"
+    caminho = "C:\\Users\\fsilva3\\Documents\\Arquivoslidos\\"
+    #caminho = "C:\\Users\\Flavio Silva\\Documents\\ArquivosConvenio\\"
     banco = 'djo.sqlite3'
-
+    substiuirDados = "NÃO"
     arquivos = os.listdir(caminho)
 
     for arq in arquivos:
         caminhoTotal = caminho + arq
         base = leitura_arquivo(caminhoTotal)
+        print(arq)
         data = str(base.loc[1, 'DATA_MOVIMENTO'])
+        print(data)
         if base.iloc[0]["TIPO_ARQUIVO"].count("DEPOSITOS"):
             tbl = 'depositosacolhidos'
-            adicionarPlanilhaData(banco, tbl, base)
+            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
+            else:
+                if substiuirDados == "SIM":
+                    deletarPlanilhaData(banco, tbl, data)
+                    adicionarPlanilhaData(banco, tbl, base)
+                else:
+                    None
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("FAVOR"):
             tbl = 'regatesafavordogoverno'
-            adicionarPlanilhaData(banco, tbl, base)
+            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
+            else:
+                if substiuirDados == "SIM":
+                    deletarPlanilhaData(banco, tbl, data)
+                    adicionarPlanilhaData(banco, tbl, base)
+                else:
+                    None
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("CONTRA"):
             tbl = 'regatescontraogoverno'
-            adicionarPlanilhaData(banco, tbl, base)
+            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
+            else:
+                if substiuirDados == "SIM":
+                    deletarPlanilhaData(banco, tbl, data)
+                    adicionarPlanilhaData(banco, tbl, base)
+                else:
+                    None
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("CONVENIO"):
             tbl = 'convenioderepasses'
-            adicionarPlanilhaData(banco, tbl, base)
+            print(verificaData(banco, tbl, data))
             if verificaData(banco, tbl, data) == False:
                 adicionarPlanilhaData(banco, tbl, base)
+            else:
+                if substiuirDados == "SIM":
+                    deletarPlanilhaData(banco, tbl, data)
+                    adicionarPlanilhaData(banco, tbl, base)
+                else:
+                    None
         else:
             print("Arquivo de resumo de movimentação")  

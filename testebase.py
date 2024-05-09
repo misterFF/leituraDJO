@@ -14,8 +14,6 @@ def deletarPlanilhaData(banco, tbl, dataTeste):
     except:
         print("Não foi possível deletar os itens do banco")
 
-
-
 def verificaData(banco, tbl, dataTeste):
     banco = sqlite3.connect(banco)
     cursor = banco.cursor()
@@ -28,7 +26,6 @@ def verificaData(banco, tbl, dataTeste):
         return True
     else:
         return False
-
 
 def adicionarPlanilhaData(banco, tbl, base):
     try:
@@ -67,13 +64,27 @@ def adicionarPlanilhaData(banco, tbl, base):
     except:
         print("Não foi possível adicionar dados novos na planilha")
 
+
+
 if __name__ == '__main__':
-    base = pd.read_excel('~\\Documents\\CONVENIO DE REPASSE DE DE 01_04_2024.xlsx')
-    dataTeste = str(base.at[0, 'DATA_MOVIMENTO'])
-    banco = 'djo.sqlite3'
-    tblDados = 'convenioderepasses'
-    print(verificaData(banco, tblDados, dataTeste))
-    if verificaData(banco, tblDados, dataTeste):
-        deletarPlanilhaData(banco, tblDados, dataTeste)
-    else:
-        adicionarPlanilhaData(banco, tblDados, base)
+    #banco = 'djo.sqlite3'
+    #tbl = 'resgatesafavordogoverno'
+    #conn =sqlite3.connect(banco)
+    #cursor = conn.cursor()
+    #sqlStatement = f"""SELECT (DATA_MOVIMENTO) FROM '{tbl}'"""
+    #sqlStatement = f"""ALTER TABLE '{tbl}' RENAME TO resgatesafavordogoverno"""
+    #sqlStatement = f"""SELECT NUMERO_DO_PROCESSO, NOME_RECLAMANTE, CPF_CNPJ_RECLAMANTE, NOME_RECLAMADO, CPF_CNPJ_RECLAMADO, SUM(VALOR_SALDO_CORRIGIDO) FROM '{tbl}'
+    #                    WHERE DATA_MOVIMENTO = '2024-05-08 00:00:00'
+    #                    GROUP BY NUMERO_DO_PROCESSO
+    #                    """
+    #sqlStatement = f"""SELECT * FROM '{tbl}'"""
+
+    #cursor.execute(sqlStatement)
+
+    #for lin in cursor.fetchall():
+    #    print(lin)
+
+
+
+
+
