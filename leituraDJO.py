@@ -148,9 +148,15 @@ def leitura_arquivo(arquivo_leitura):
         logging.info(f"O arquivo {arquivo_leitura} foi lido com sucesso")
         return basesjuntas
 
+def conectaBanco(banco):
+    try:
+        conexao = sqlite3.connect(banco)
+        return conexao
+    except:
+        print("Não foi possível acessar o banco")
+        return None
 def deletarPlanilhaData(banco, tbl, dataTeste):
     try:
-        banco = sqlite3.connect(banco)
         cursor = banco.cursor()
         cursor.execute(f"""DELETE FROM '{tbl}' WHERE
             DATA_MOVIMENTO = '{dataTeste}'""")
@@ -161,7 +167,6 @@ def deletarPlanilhaData(banco, tbl, dataTeste):
         print("Não foi possível deletar os itens do banco")
 
 def verificaData(banco, tbl, dataTeste):
-    banco = sqlite3.connect(banco)
     cursor = banco.cursor()
     cursor.execute(f"""SELECT COUNT(CONTA_JUDICIAL) FROM '{tbl}' WHERE
      DATA_MOVIMENTO = '{dataTeste}'""")
@@ -175,7 +180,6 @@ def verificaData(banco, tbl, dataTeste):
 
 def adicionarPlanilhaData(banco, tbl, base):
     try:
-        banco = sqlite3.connect(banco)
         cursor = banco.cursor()
         cursor.execute(f"""create table if not exists '{tbl}' (
                                    NUMERO_DO_PROCESSO text,
@@ -229,49 +233,49 @@ if __name__ == '__main__':
         print(data)
         if base.iloc[0]["TIPO_ARQUIVO"].count("DEPOSITOS"):
             tbl = 'depositosacolhidos'
-            print(verificaData(banco, tbl, data))
-            if verificaData(banco, tbl, data) == False:
-                adicionarPlanilhaData(banco, tbl, base)
+            conexao = conectaBanco(banco)
+            if verificaData(conexao, tbl, data) == False:
+                adicionarPlanilhaData(conexao, tbl, base)
             else:
                 if substiuirDados == "SIM":
-                    deletarPlanilhaData(banco, tbl, data)
-                    adicionarPlanilhaData(banco, tbl, base)
+                    deletarPlanilhaData(conexao, tbl, data)
+                    adicionarPlanilhaData(conexao, tbl, base)
                 else:
                     None
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("FAVOR"):
             tbl = 'regatesafavordogoverno'
-            print(verificaData(banco, tbl, data))
-            if verificaData(banco, tbl, data) == False:
-                adicionarPlanilhaData(banco, tbl, base)
+            conexao = conectaBanco(banco)
+            if verificaData(conexao, tbl, data) == False:
+                adicionarPlanilhaData(conexao, tbl, base)
             else:
                 if substiuirDados == "SIM":
-                    deletarPlanilhaData(banco, tbl, data)
-                    adicionarPlanilhaData(banco, tbl, base)
+                    deletarPlanilhaData(conexao, tbl, data)
+                    adicionarPlanilhaData(conexao, tbl, base)
                 else:
                     None
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("CONTRA"):
             tbl = 'regatescontraogoverno'
-            print(verificaData(banco, tbl, data))
-            if verificaData(banco, tbl, data) == False:
-                adicionarPlanilhaData(banco, tbl, base)
+            conexao = conectaBanco(banco)
+            if verificaData(conexao, tbl, data) == False:
+                adicionarPlanilhaData(conexao, tbl, base)
             else:
                 if substiuirDados == "SIM":
-                    deletarPlanilhaData(banco, tbl, data)
-                    adicionarPlanilhaData(banco, tbl, base)
+                    deletarPlanilhaData(conexao, tbl, data)
+                    adicionarPlanilhaData(conexao, tbl, base)
                 else:
                     None
 
         elif base.iloc[0]["TIPO_ARQUIVO"].count("CONVENIO"):
             tbl = 'convenioderepasses'
-            print(verificaData(banco, tbl, data))
-            if verificaData(banco, tbl, data) == False:
-                adicionarPlanilhaData(banco, tbl, base)
+            conexao = conectaBanco(banco)
+            if verificaData(conexao, tbl, data) == False:
+                adicionarPlanilhaData(conexao, tbl, base)
             else:
                 if substiuirDados == "SIM":
-                    deletarPlanilhaData(banco, tbl, data)
-                    adicionarPlanilhaData(banco, tbl, base)
+                    deletarPlanilhaData(conexao, tbl, data)
+                    adicionarPlanilhaData(conexao, tbl, base)
                 else:
                     None
         else:
