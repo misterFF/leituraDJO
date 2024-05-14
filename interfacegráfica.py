@@ -56,7 +56,11 @@ class App(ct.CTk):
         label.place(x = 110, y = 70)
         dataInfo = ct.CTkEntry(rfvDataWindow, placeholder_text='dd/mm/yyyy')
         dataInfo.place(x = 150, y = 70)
+        btnExecutar = ct.CTkButton(rfvDataWindow, text='Pesquisar', command=self.pesquisarPorData)
+        btnExecutar.place(x = 130, y = 110)
 
+    def pesquisarPorData(self):
+        print("Data pressionada")
 
 
 
