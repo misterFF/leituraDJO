@@ -1,6 +1,6 @@
 import sqlite3
 import pandas as pd
-
+from datetime import datetime
 
 def deletarPlanilhaData(banco, tbl, dataTeste):
     try:
@@ -64,10 +64,40 @@ def adicionarPlanilhaData(banco, tbl, base):
     except:
         print("Não foi possível adicionar dados novos na planilha")
 
+def dataMaxima(banco, tbl):
+    banco = sqlite3.connect(banco)
+    cursor = banco.cursor()
+    cursor.execute(f"""SELECT MAX(DATA_MOVIMENTO) FROM '{tbl}'""")
+    data = cursor.fetchall()[0][0]
+    return data
 
+def retPorData(banco, tbl, data):
+    banco = sqlite3.connect(banco)
+    cursor = banco.cursor()
+    cursor.execute(f"""SELECT * FROM '{tbl}'
+                    WHERE DATA_MOVIMENTO = '{data}'""")
+    colunas = ['NUMERO_DO_PROCESSO', 'NOME_DO_TRIBUNAL', 'NOME_DA_COMARCA',  'ORGAO',  'DEPENDENCIA',
+                                   'NOME_RECLAMANTE',  'CPF_CNPJ_RECLAMANTE',
+                                   'NOME_RECLAMADO',  'CPF_CNPJ_RECLAMADO',
+                                  'CONTA_JUDICIAL',  'PARCELA',
+                                   'NUMERO_DA_GUIA',  'DATA_DO_DEPOSITO',
+                                   'VALOR_SALDO_CAPITAL',  'VALOR_CORRECAO_MONETARIA',
+                                   'VALOR_JUROS',  'VALOR_SALDO_CORRIGIDO',
+                                   'VALOR_IR',  'DATA_PROCESSAMENTO',
+                                   'CD_PRD_BNC',  'NR_SEQUENCIAL_LEGISLACAO_TRIBUTARIA',  'NUMERO_LEI_TRIBUTARIA',
+                                   'DATA_MOVIMENTO',  'ARQUIVO', 'TIPO_ARQUIVO']
+    df = pd.DataFrame(cursor.fetchall(), columns=colunas)
+    return df
 
 if __name__ == '__main__':
-    #banco = 'djo.sqlite3'
+    banco = 'djo.sqlite3'
+    data = "08/05/2024 00:00"
+    date_format = datetime.strptime(data, '%d/%m/%Y %H:%M')
+    #print(date_format)
+    df = retPorData(banco, 'resgatescontraogoverno', date_format)
+
+    #print(dataMaxima(banco, 'resgatescontraogoverno'))
+
     #tbl = 'resgatesafavordogoverno'
     #conn =sqlite3.connect(banco)
     #cursor = conn.cursor()

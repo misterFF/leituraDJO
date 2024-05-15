@@ -1,5 +1,36 @@
 import customtkinter as ct
 from CTkMenuBar import *
+import sqlite3
+from datetime import datetime
+import pandas as pd
+
+def dataMaxima(tbl, banco = 'djo.sqlite3'):
+    banco = sqlite3.connect(banco)
+    cursor = banco.cursor()
+    cursor.execute(f"""SELECT MAX(DATA_MOVIMENTO) FROM '{tbl}'""")
+    data = cursor.fetchall()[0][0]
+    return data
+
+def retPorData(tbl, data, banco = 'djo.sqlite3'):
+    banco = sqlite3.connect(banco)
+    cursor = banco.cursor()
+    dataTempo = data + " 00:00"
+    dataTempo = datetime.strptime(dataTempo, '%d/%m/%Y %H:%M')
+    cursor.execute(f"""SELECT * FROM '{tbl}'
+                    WHERE DATA_MOVIMENTO = '{dataTempo}'""")
+    colunas = ['NUMERO_DO_PROCESSO', 'NOME_DO_TRIBUNAL', 'NOME_DA_COMARCA',  'ORGAO',  'DEPENDENCIA',
+                                   'NOME_RECLAMANTE',  'CPF_CNPJ_RECLAMANTE',
+                                   'NOME_RECLAMADO',  'CPF_CNPJ_RECLAMADO',
+                                  'CONTA_JUDICIAL',  'PARCELA',
+                                   'NUMERO_DA_GUIA',  'DATA_DO_DEPOSITO',
+                                   'VALOR_SALDO_CAPITAL',  'VALOR_CORRECAO_MONETARIA',
+                                   'VALOR_JUROS',  'VALOR_SALDO_CORRIGIDO',
+                                   'VALOR_IR',  'DATA_PROCESSAMENTO',
+                                   'CD_PRD_BNC',  'NR_SEQUENCIAL_LEGISLACAO_TRIBUTARIA',  'NUMERO_LEI_TRIBUTARIA',
+                                   'DATA_MOVIMENTO',  'ARQUIVO', 'TIPO_ARQUIVO']
+    df = pd.DataFrame(cursor.fetchall(), columns=colunas)
+    print(df.head())
+    return df
 
 class App(ct.CTk):
     def __init__(self):
@@ -40,7 +71,6 @@ class App(ct.CTk):
         dropdownsair.add_separator()
         dropdownsair.add_option(option="Sair", command=quit)
 
-
     def rfvPorData(self):
         rfvDataWindow  = ct.CTkToplevel(self)
         rfvDataWindow.title("Resgates a Favor do Governo por Data")
@@ -56,11 +86,22 @@ class App(ct.CTk):
         label.place(x = 110, y = 70)
         dataInfo = ct.CTkEntry(rfvDataWindow, placeholder_text='dd/mm/yyyy')
         dataInfo.place(x = 150, y = 70)
-        btnExecutar = ct.CTkButton(rfvDataWindow, text='Pesquisar', command=self.pesquisarPorData)
+        def pesquisarPorData():
+            retPorData(tbl = 'resgatesafavordogoverno', data=dataInfo.get())
+            fecharJanela()
+        def fecharJanela():
+            rfvDataWindow.destroy()
+            rfvDataWindow.update()
+        btnExecutar = ct.CTkButton(rfvDataWindow, text='Pesquisar', command=pesquisarPorData)
         btnExecutar.place(x = 130, y = 110)
 
-    def pesquisarPorData(self):
-        print("Data pressionada")
+
+
+
+
+
+
+
 
 
 
