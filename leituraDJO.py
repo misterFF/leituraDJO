@@ -140,7 +140,7 @@ def leitura_arquivo(arquivo_leitura):
         basesjuntas["TIPO_ARQUIVO"] = tipoArquivo
 
         try:
-            basesjuntas.to_excel(f"~\\Documents\\{nomeArquivo}", index=False, sheet_name=tipoArquivo)
+            basesjuntas.to_excel(f"C:\\Users\\Flavio Silva\\Documents\\{nomeArquivo}", index=False, sheet_name=tipoArquivo)
 
         except:
             logging.error(f"O arquivo {arquivo_leitura} não pode pode ser escrito em .xlsx, verificar permissão ou espaço em disco.")
@@ -219,68 +219,82 @@ if __name__ == '__main__':
 
     import os
     #caminho = "\\\\cifs-zone3\\transfarq\\SATE\\djo\\2024\\02 - Fevereiro\\Arquivos DJO\\"
-    caminho = "C:\\Users\\fsilva3\\Documents\\Arquivoslidos\\"
-    #caminho = "C:\\Users\\Flavio Silva\\Documents\\ArquivosConvenio\\"
-    banco = 'djo.sqlite3'
-    substiuirDados = "NÃO"
+    #caminho = "C:\\Users\\fsilva3\\Documents\\Arquivoslidos\\"
+    caminho = "C:\\Users\\Flavio Silva\\Documents\\ArquivosConvenio\\"
+    banco = 'C:\\Users\\Flavio Silva\\Documents\\basesqlite3\\djo_painel.sqlite3'
+    substiuirDados = "SIM"
     arquivos = os.listdir(caminho)
 
     for arq in arquivos:
         caminhoTotal = caminho + arq
-        base = leitura_arquivo(caminhoTotal)
         print(arq)
-        data = str(base.loc[1, 'DATA_MOVIMENTO'])
-        print(data)
-        if base.iloc[0]["TIPO_ARQUIVO"].count("DEPOSITOS"):
-            tbl = 'depositosacolhidos'
-            conexao = conectaBanco(banco)
-            adicionarPlanilhaData(conexao, tbl, base)
-            #if verificaData(conexao, tbl, data) == False:
-            #    adicionarPlanilhaData(conexao, tbl, base)
-            #else:
-            #    if substiuirDados == "SIM":
-            #        deletarPlanilhaData(conexao, tbl, data)
-            #        adicionarPlanilhaData(conexao, tbl, base)
-            #    else:
-            #        None
+        base = leitura_arquivo(caminhoTotal)
 
-        elif base.iloc[0]["TIPO_ARQUIVO"].count("FAVOR"):
-            tbl = 'resgatesafavordogoverno'
-            conexao = conectaBanco(banco)
-            adicionarPlanilhaData(conexao, tbl, base)
-            # if verificaData(conexao, tbl, data) == False:
-            #    adicionarPlanilhaData(conexao, tbl, base)
-            # else:
-            #    if substiuirDados == "SIM":
-            #        deletarPlanilhaData(conexao, tbl, data)
-            #        adicionarPlanilhaData(conexao, tbl, base)
-            #    else:
-            #        None
+        try:
+            data = str(base.loc[1, 'DATA_MOVIMENTO'])
+            print(data)
+            if base.iloc[0]["TIPO_ARQUIVO"].count("DEPOSITOS"):
+                tbl = 'depositosacolhidos'
+                conexao = conectaBanco(banco)
+                try:
+                    adicionarPlanilhaData(conexao, tbl, base)
+                except:
+                    if verificaData(conexao, tbl, data) == False:
+                        adicionarPlanilhaData(conexao, tbl, base)
+                    else:
+                        if substiuirDados == "SIM":
+                            deletarPlanilhaData(conexao, tbl, data)
+                            adicionarPlanilhaData(conexao, tbl, base)
+                        else:
+                            None
 
-        elif base.iloc[0]["TIPO_ARQUIVO"].count("CONTRA"):
-            tbl = 'resgatescontraogoverno'
-            conexao = conectaBanco(banco)
-            adicionarPlanilhaData(conexao, tbl, base)
-            # if verificaData(conexao, tbl, data) == False:
-            #    adicionarPlanilhaData(conexao, tbl, base)
-            # else:
-            #    if substiuirDados == "SIM":
-            #        deletarPlanilhaData(conexao, tbl, data)
-            #        adicionarPlanilhaData(conexao, tbl, base)
-            #    else:
-            #        None
+            elif base.iloc[0]["TIPO_ARQUIVO"].count("FAVOR"):
+                tbl = 'resgatesafavordogoverno'
+                conexao = conectaBanco(banco)
+                try:
+                    adicionarPlanilhaData(conexao, tbl, base)
+                except:
+                    if verificaData(conexao, tbl, data) == False:
+                        adicionarPlanilhaData(conexao, tbl, base)
+                    else:
+                        if substiuirDados == "SIM":
+                            deletarPlanilhaData(conexao, tbl, data)
+                            adicionarPlanilhaData(conexao, tbl, base)
+                        else:
+                            None
 
-        elif base.iloc[0]["TIPO_ARQUIVO"].count("CONVENIO"):
-            tbl = 'convenioderepasses'
-            conexao = conectaBanco(banco)
-            adicionarPlanilhaData(conexao, tbl, base)
-            # if verificaData(conexao, tbl, data) == False:
-            #    adicionarPlanilhaData(conexao, tbl, base)
-            # else:
-            #    if substiuirDados == "SIM":
-            #        deletarPlanilhaData(conexao, tbl, data)
-            #        adicionarPlanilhaData(conexao, tbl, base)
-            #    else:
-            #        None
-        else:
-            print("Arquivo de resumo de movimentação")  
+            elif base.iloc[0]["TIPO_ARQUIVO"].count("CONTRA"):
+                tbl = 'resgatescontraogoverno'
+                conexao = conectaBanco(banco)
+                try:
+                    adicionarPlanilhaData(conexao, tbl, base)
+                except:
+                    if verificaData(conexao, tbl, data) == False:
+                        adicionarPlanilhaData(conexao, tbl, base)
+                    else:
+                        if substiuirDados == "SIM":
+                            deletarPlanilhaData(conexao, tbl, data)
+                            adicionarPlanilhaData(conexao, tbl, base)
+                        else:
+                            None
+
+            elif base.iloc[0]["TIPO_ARQUIVO"].count("CONVENIO"):
+                None
+                #tbl = 'convenioderepasses'
+                #conexao = conectaBanco(banco)
+                #try:
+                #    adicionarPlanilhaData(conexao, tbl, base)
+                #except:
+                #    if verificaData(conexao, tbl, data) == False:
+                #        adicionarPlanilhaData(conexao, tbl, base)
+                #    else:
+                #        if substiuirDados == "SIM":
+                #            deletarPlanilhaData(conexao, tbl, data)
+                #            adicionarPlanilhaData(conexao, tbl, base)
+                #        else:
+                #            None
+            else:
+                print("Arquivo de resumo de movimentação")
+
+        except:
+            print("Arquivo de resumo de movimentação")
