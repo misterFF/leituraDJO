@@ -1,10 +1,10 @@
 import customtkinter as ct
 from CTkMenuBar import *
-from datetime import datetime
 import pandas as pd
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox 
+from tkinter import ttk
 import os
 import re
 
@@ -14,32 +14,45 @@ def origem():
 def destino():
     directory = filedialog.askdirectory()
     lblDestino.config(text = directory)
+
 def leitura_arquivo():
+    if (lblOrigem.cget('text') == "" or lblOrigem.cget('text') == ""):
+        messagebox.showerror("ERRO!","Origem ou destino dos arquivos não foi selecionado.")
+        return None
     import pandas as pd
     import logging    
     log = lblDestino.cget("text")+'/'+"log.txt"    
     logging.basicConfig(level=logging.INFO, filename=log, format="%(asctime)s - %(levelname)s - %(message)s")
     arqsSucesso = []
     arqsFalha = []
-    largurasColunasTipoA = [1, 25, 25, 25, 25, 4, 30, 14, 30, 14, 257]
     arquivos = os.listdir(lblOrigem.cget("text"))
     arquivos = [arq for arq in arquivos if "djo190" in arq]
+    arqTotal = 0
+    arqLido = 0
     for arq in arquivos:
         caminhoTotal = lblOrigem.cget("text")+'/'+arq
-        print(f'Processando o arquivo {caminhoTotal}')
+        arqAtual = os.path.getsize(caminhoTotal)
+        arqTotal += arqAtual
+    barraProgresso.config(maximum=arqTotal)
+    for arq in arquivos:        
+        caminhoTotal = lblOrigem.cget("text")+'/'+arq
+        tamx = (len(caminhoTotal) + 5)
+        xin = (760/2)-((len(caminhoTotal) + 5)/2)
+        varx = ('%d', xin)
+        lblArqLendo.config(text=arq, width=(len(arq) + 5))
+        window.update()
+        arqAtual = os.path.getsize(caminhoTotal)
+        largurasColunasTipoA = [1, 25, 25, 25, 25, 4, 30, 14, 30, 14, 257]
         baseLidaA = pd.read_fwf(caminhoTotal, header=None, widths=largurasColunasTipoA, encoding='unicode_escape')    
         tipoArquivo = baseLidaA.loc[5, 1]
-
         if tipoArquivo == "RESUMO DO MOVIMENTO DIARI":
-
             largurasColunasTipoA = [37, 22, 27, 27]
             baseLidaA = pd.read_fwf(caminhoTotal, header=None, widths=largurasColunasTipoA, encoding='unicode_escape')
             dataArquivo = baseLidaA.loc[3, 0][-10:].replace(".", "_")
-            nomeArquivo = f"{tipoArquivo} {dataArquivo}.xlsx"           
-
+            nomeArquivo = f"{tipoArquivo} {dataArquivo}.xlsx"         
             baseLidaA = baseLidaA.drop(range(6))
             baseLidaA.iloc[0][0] = "Data"
-            baseLidaA.iloc[0][1] = dataArquivo            
+            baseLidaA.iloc[0][1] = dataArquivo
 
             for i in range(len(baseLidaA)):
 
@@ -59,7 +72,6 @@ def leitura_arquivo():
                     or baseLidaA.iloc[i][2] == "(-)" or baseLidaA.iloc[i][2] == "(=)"):
                     baseLidaA.iloc[i][2] = baseLidaA.iloc[i][2].replace(".", "")
                     baseLidaA.iloc[i][2] = baseLidaA.iloc[i][2].replace(",", ".")
-
                     baseLidaA.iloc[i][2] = float(baseLidaA.iloc[i][2])
 
                 check = re.search(r"(\W*\d*\W*\d*\W*\d*\W*\d*\W*\d*\W*\d*)(-$)", str(baseLidaA.iloc[i][3]))
@@ -71,16 +83,17 @@ def leitura_arquivo():
                         or baseLidaA.iloc[i][3] == "(-)" or baseLidaA.iloc[i][3] == "(=)"):
                     baseLidaA.iloc[i][3] = baseLidaA.iloc[i][3].replace(".", "")
                     baseLidaA.iloc[i][3] = baseLidaA.iloc[i][3].replace(",", ".")
-
                     baseLidaA.iloc[i][3] = float(baseLidaA.iloc[i][3])
-
-
-            baseLidaA.to_excel(f"~\\Documents\\{nomeArquivo}", index=False, sheet_name=tipoArquivo, header=False)
-            arqsSucesso.append(arq)
-            logging.info(f"O arquivo {arq} foi lido com sucesso")
+                    try:
+                        destino = lblDestino.cget("text")
+                        baseLidaA.to_excel(f"{destino}/{nomeArquivo}", index=False, sheet_name=tipoArquivo, header=False)
+                        logging.info(f"O arquivo {arq} foi lido com sucesso")
+                    except:
+                        logging.error(f"O arquivo {arq} não pode pode ser escrito em .xlsx, verificar permissão ou espaço em disco.")
+                        arqsFalha.append(arq)           
 
         else:
-
+            
             largurasColunasTipoB = [1, 13, 4, 15, 10, 17, 17, 17, 17, 17, 10, 4, 4, 6, 298]
             baseLidaB = pd.read_fwf(caminhoTotal, header=None, widths=largurasColunasTipoB, encoding='unicode_escape')
 
@@ -88,8 +101,6 @@ def leitura_arquivo():
 
             baseLidaA['PROCESSO'] = nProcesso
             baseLidaB['PROCESSO'] = nProcesso
-
-
             dataArquivo = baseLidaA.loc[3, 1][-10:].replace(".", "_")
             nomeArquivo = f"{tipoArquivo} {dataArquivo}.xlsx"
 
@@ -118,7 +129,7 @@ def leitura_arquivo():
                                 "NUMERO_LEI_TRIBUTARIA", "FILLER", "PROCESSO"]
 
             if(baseLidaA.iloc[0]["CODIGOA"]=="B" and baseLidaB.iloc[0]["CODIGOB"]=="B"):
-                logging.error(f"O arquivo {arquivo_leitura} não pode ser carregado, verificar a integridade do arquivo")
+                logging.error(f"O arquivo {arq} não pode ser carregado, verificar a integridade do arquivo")
                 print("Base Com Problemas")
                 return None
 
@@ -155,7 +166,7 @@ def leitura_arquivo():
 
             try:
                 destino = lblDestino.cget("text")
-                basesjuntas.to_excel(f"{destino}/{nomeArquivo}.xlsx", index=False, sheet_name=tipoArquivo)
+                basesjuntas.to_excel(f"{destino}/{nomeArquivo}", index=False, sheet_name=tipoArquivo)
                 arqsSucesso.append(arq)
 
             except:
@@ -163,16 +174,19 @@ def leitura_arquivo():
                 arqsFalha.append(arq)
 
             logging.info(f"O arquivo {arq} foi lido com sucesso")
+        arqLido += arqAtual
+        barraProgresso['value'] += arqAtual
+        window.update()
     if len(arqsFalha)==0:
         messagebox.showinfo("Processamento Concluído", "Os seguinte arquivos foram processados com sucesso: "+", ".join(arqsSucesso))
     else:
-        messagebox.showinfo("Processamento Concluído", "Os seguintes arquivos foram processados com sucesso: "+", ".join(arqsSucesso)+"\\n"+
+        messagebox.showwarning("Processamento Concluído", "Os seguintes arquivos foram processados com sucesso: "+", ".join(arqsSucesso)+"\\n"+
                             "Os arquivos não tiveram sucesso no seu processamento: "+", ".join(arqsFalha))
 def encerrar():
     window.destroy()
 
 window = ct.CTk()
-window.title("SADJud")
+window.title("SADJud - Sistema de Acompanhamento de Depósitos Judiciais")
 w = 760
 h = 520
 ws = window.winfo_screenwidth()
@@ -188,16 +202,24 @@ origemArqs = ct.CTkButton(window, text="Origem dos Arquivos", command=origem)
 origemArqs.place(x = 40, y = 100)
 
 lblDestino = tk.Label(window, bg = "white", width=70, bd = 4, relief="sunken")
-lblDestino.place(x = 200, y = 301)
+lblDestino.place(x = 200, y = 201)
 destArqs = ct.CTkButton(window, text="Destino dos Arquivos", command=destino)
-destArqs.place(x = 40, y = 300)      
+destArqs.place(x = 40, y = 200)   
+
+lblArqPros = tk.Label(window, text="Arquivo em processamento: ", width=35, relief="groove")
+lblArqPros.place(x = 50, y = 302)
+
+lblArqLendo = tk.Label(window, bg = "white", width=5, bd = 4, relief="sunken")
+lblArqLendo.place(x = 305, y = 300)
+
+barraProgresso = ttk.Progressbar(window, orient='horizontal', length=450, mode='determinate')
+barraProgresso.place(x=180, y=340)
 
 processar = ct.CTkButton(window, text="Processar Arquivos", command=leitura_arquivo)
 processar.place(x = 300, y = 400)
 
 sair = ct.CTkButton(window, text="Encerrar SADJud", command=encerrar)
 sair.place(x = 300, y = 450)
-
 
 
 window.mainloop()
